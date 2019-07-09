@@ -1,0 +1,10 @@
+aiodns
+aiohttp
+aioresponses
+asyncio
+cchardet
+pytest
+pytest-asyncio
+pytest-coverage
+pytest-pep8
+
