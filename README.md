@@ -1,6 +1,6 @@
 # aiosigmasms
 
-Module provides an interface for sigmasms.ru API.
+Module provides an interface for https://sigmasms.ru/api/http/.
 
 ## Usage
 
@@ -17,6 +17,7 @@ token = token_resp['token']
 resp = await client.send_message('+79999999999', 'text', 'sms', token)
 print(resp)
 
+# check status
 msg_id = resp['id']
 status = await client.check_status(msg_id, token)
 print(status)
@@ -25,5 +26,7 @@ print(status)
 
 ## Changelog
 
-- Oct 29, 2019 - Changed application architecture
-- Jul 9, 2019 - Release module
+| Date         | Changes |
+| ------------ | ------- |
+| Oct 29, 2019 | - Changed application architecture<br>- Fix tests<br>- Add README.md<br>- Add setup.py |
+| Jul 9, 2019  | Release module |
