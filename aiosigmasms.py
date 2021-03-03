@@ -1,5 +1,4 @@
-import aiohttp
-import logging
+import httpx
 
 __all__ = ['Client', 'SigmaClientError']
 
@@ -10,12 +9,17 @@ class SigmaClientError(Exception):
 
 class Client:
 
-    BASE_URL = 'http://online.sigmasms.ru/api'
+    _BASE_URL = 'http://online.sigmasms.ru/api'
 
     def __init__(self, username, password, sender):
         self.username = username
         self.password = password
         self.sender = sender
+
+    async def _request(self, method, endpoint, **kwargs):
+        async with httpx.AsyncClient(base_url=self._BASE_URL) as client:
+            resp = await client.request(method, endpoint, **kwargs)
+            return resp.json()
 
     async def login(self):
         if not (self.username or self.password):
@@ -23,12 +27,6 @@ class Client:
         data = {'username': self.username, 'password': self.password}
         resp = await self._request('POST', 'login',  json=data)
         return resp
-
-    async def _request(self, method, endpoint, **kwargs):
-        url = f'{self.BASE_URL}/{endpoint}'
-        async with aiohttp.ClientSession() as client:
-            async with client.request(method, url, **kwargs) as resp:
-                return await resp.json()
 
     async def send_message(self, rcpt, msg, msg_type, token):
         payload = {

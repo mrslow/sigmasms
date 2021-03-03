@@ -1,18 +1,22 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open('README.md') as f:
     readme = f.read()
 
-dependencies = ['aiohttp']
+dependencies = ['httpx']
 
 setup(
     name='aiosigmasms',
-    version='0.2',
+    version='0.3',
     description='Tool for easy working with SigmaSMS API',
     long_description=readme,
+    long_description_content_type="text/markdown",
     author='Anton Shchetikhin',
     author_email='animal2k@gmail.com',
     py_modules=['aiosigmasms'],
+    install_requires=['httpx'],
     url='https://github.com/mrslow/aiosigmasms',
-    keywords=['api', 'sms', 'sigmasms', 'asyncio', 'aiohttp']
+    keywords='api sigmasms async',
+    packages=find_packages(),
+    python_requires='>=3.7'
 )

@@ -23,10 +23,3 @@ status = await client.check_status(msg_id, token)
 print(status)
 
 ```
-
-## Changelog
-
-| Date         | Changes |
-| ------------ | ------- |
-| Oct 29, 2019 | - Changed application architecture<br>- Fix tests<br>- Add README.md<br>- Add setup.py |
-| Jul 9, 2019  | Release module |

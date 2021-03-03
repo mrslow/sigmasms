@@ -1,10 +1,9 @@
-aiodns
-aiohttp
-aioresponses
-asyncio
-cchardet
+# core
+httpx
+# pytest
 pytest
 pytest-asyncio
 pytest-coverage
+pytest-httpx
 pytest-pep8
 
