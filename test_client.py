@@ -1,7 +1,7 @@
 import pytest
 import pytest_asyncio
 
-from client import Client, AsyncClient, SigmaClientError
+from sigmasms import Client, AsyncClient, SigmaClientError
 
 _id = "aca68fa3"
 token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
