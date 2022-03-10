@@ -6,17 +6,17 @@ with open('README.md') as f:
 dependencies = ['httpx']
 
 setup(
-    name='aiosigmasms',
-    version='0.3',
+    name='sigmasms',
+    version='1.0',
     description='Tool for easy working with SigmaSMS API',
     long_description=readme,
     long_description_content_type="text/markdown",
     author='Anton Shchetikhin',
     author_email='animal2k@gmail.com',
-    py_modules=['aiosigmasms'],
+    py_modules=['sigmasms'],
     install_requires=['httpx'],
     url='https://github.com/mrslow/aiosigmasms',
-    keywords='api sigmasms async',
+    keywords='api sigmasms client',
     packages=find_packages(),
     python_requires='>=3.7'
 )
