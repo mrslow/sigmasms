@@ -22,7 +22,7 @@ responses = {
 
 @pytest.fixture
 def valid_sync_client():
-    client = Client('user', 'password', 'sender')
+    client = Client('user', 'password')
     client.token = token
     client.user_id = '1'
     yield client
@@ -31,7 +31,7 @@ def valid_sync_client():
 
 @pytest_asyncio.fixture
 async def valid_async_client():
-    client = AsyncClient('user', 'password', 'sender')
+    client = AsyncClient('user', 'password')
     client.token = token
     client.user_id = '1'
     yield client
@@ -44,7 +44,7 @@ async def test_auth_ok(httpx_mock):
                             json=responses['login'],
                             url='http://online.sigmasms.ru/api/login',
                             method='POST')
-    client = AsyncClient('user', 'password', 'sender')
+    client = AsyncClient('user', 'password')
     await client.auth()
     assert client.token == token
     assert client.user_id == '1'
@@ -54,7 +54,7 @@ async def test_auth_ok(httpx_mock):
 async def test_auth_fail(httpx_mock):
     with pytest.raises(SigmaClientError,
                        match='Username and password are required'):
-        client = AsyncClient('', '', 'sender')
+        client = AsyncClient('', '')
         await client.auth()
 
 
@@ -64,7 +64,8 @@ async def test_send_message_ok(valid_async_client, httpx_mock):
                             url='http://online.sigmasms.ru/api/sendings',
                             headers=headers,
                             json=responses['send_msg_ok'])
-    r = await valid_async_client.send_message('+79999999999', 'test', 'sms')
+    r = await valid_async_client.send_message(
+        'sender', '+79999999999', 'test', 'sms')
     assert r['error'] is None
 
 
@@ -74,7 +75,8 @@ async def test_send_message_fail(valid_async_client, httpx_mock):
                             url='http://online.sigmasms.ru/api/sendings',
                             headers=headers,
                             json=responses['send_msg_fail'])
-    r = await valid_async_client.send_message('+79999999999', 'test', 'sms')
+    r = await valid_async_client.send_message(
+        'sender', '+79999999999', 'test', 'sms')
     assert 'text' == r['error']
 
 
@@ -116,7 +118,7 @@ def test_sync_auth_ok(httpx_mock):
                             json=responses['login'],
                             url='http://online.sigmasms.ru/api/login',
                             method='POST')
-    client = Client('user', 'password', 'sender')
+    client = Client('user', 'password')
     client.auth()
     assert client.token == token
     assert client.user_id == '1'
@@ -125,7 +127,7 @@ def test_sync_auth_ok(httpx_mock):
 def test_sync_auth_fail(httpx_mock):
     with pytest.raises(SigmaClientError,
                        match='Username and password are required'):
-        client = Client('', '', 'sender')
+        client = Client('', '')
         client.auth()
 
 
@@ -134,7 +136,8 @@ def test_sync_send_message_ok(valid_sync_client, httpx_mock):
                             url='http://online.sigmasms.ru/api/sendings',
                             headers=headers,
                             json=responses['send_msg_ok'])
-    r = valid_sync_client.send_message('+79999999999', 'test', 'sms')
+    r = valid_sync_client.send_message(
+        'sender', '+79999999999', 'test', 'sms')
     assert r['error'] is None
 
 
@@ -143,7 +146,7 @@ def test_sync_send_message_fail(valid_sync_client, httpx_mock):
                             url='http://online.sigmasms.ru/api/sendings',
                             headers=headers,
                             json=responses['send_msg_fail'])
-    r = valid_sync_client.send_message('+79999999999', 'test', 'sms')
+    r = valid_sync_client.send_message('sender', '+79999999999', 'test', 'sms')
     assert 'text' == r['error']
 
 

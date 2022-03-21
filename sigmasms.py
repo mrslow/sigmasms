@@ -13,28 +13,27 @@ class SigmaClientError(Exception):
 
 class BaseClient:
 
-    def __init__(self, username: str, password: str, sender: Optional[str]):
+    def __init__(self, username: str, password: str):
         self.username: str = username
         self.password: str = password
-        self.sender: str = sender
         self.token: Optional[str] = None
         self.user_id: Optional[str] = None
 
-    def prepare_payload(self, rcpt, msg, msg_type):
+    def prepare_payload(self, sender, recipient, message, mtype):
         return {
-            'recipient': rcpt,
-            'type': msg_type,
+            'recipient': recipient,
+            'type': mtype,
             'payload': {
-                'sender': self.sender,
-                'text': msg
+                'sender': sender,
+                'text': message
             }
         }
 
 
 class Client(BaseClient):
 
-    def __init__(self, username: str, password: str, sender: Optional[str]):
-        super().__init__(username, password, sender)
+    def __init__(self, username: str, password: str):
+        super().__init__(username, password)
         self.client: httpx.Client = httpx.Client(base_url=_BASE_URL, timeout=60)
 
     def close(self):
@@ -54,8 +53,8 @@ class Client(BaseClient):
         self.user_id = resp['id']
         self.token = resp['token']
 
-    def send_message(self, rcpt, msg, msg_type):
-        payload = self.prepare_payload(rcpt, msg, msg_type)
+    def send_message(self, sender, recipient, message, mtype):
+        payload = self.prepare_payload(sender, recipient, message, mtype)
         return self._request('POST', 'sendings', json=payload)
 
     def check_status(self, message_id):
@@ -68,8 +67,8 @@ class Client(BaseClient):
 
 class AsyncClient(BaseClient):
 
-    def __init__(self, username: str, password: str, sender: Optional[str]):
-        super().__init__(username, password, sender)
+    def __init__(self, username: str, password: str):
+        super().__init__(username, password)
         self.client: httpx.AsyncClient = httpx.AsyncClient(base_url=_BASE_URL,
                                                            timeout=60)
 
@@ -90,8 +89,8 @@ class AsyncClient(BaseClient):
         self.user_id = resp['id']
         self.token = resp['token']
 
-    async def send_message(self, rcpt, msg, msg_type):
-        payload = self.prepare_payload(rcpt, msg, msg_type)
+    async def send_message(self, sender, recipient, message, mtype):
+        payload = self.prepare_payload(sender, recipient, message, mtype)
         return await self._request('POST', 'sendings', json=payload)
 
     async def check_status(self, message_id):

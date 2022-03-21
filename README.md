@@ -1,4 +1,4 @@
-# aiosigmasms
+# sigmasms
 
 Module provides an interface for https://sigmasms.ru/api/http/.
 
@@ -15,7 +15,7 @@ await client.auth()
 print(client.token)
 
 # send message
-resp = await client.send_message('+79999999999', 'text', 'sms')
+resp = await client.send_message('TestSender', '+79999999999', 'text', 'sms')
 print(resp)
 
 # check message status
