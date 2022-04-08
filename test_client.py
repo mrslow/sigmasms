@@ -1,7 +1,8 @@
+import httpx
 import pytest
 import pytest_asyncio
 
-from sigmasms import Client, AsyncClient, SigmaClientError
+from sigmasms import Client, AsyncClient, SigmaClientError, SigmaSMSError
 
 _id = "aca68fa3"
 token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
@@ -52,7 +53,7 @@ async def test_auth_ok(httpx_mock):
 
 @pytest.mark.asyncio
 async def test_auth_fail(httpx_mock):
-    with pytest.raises(SigmaClientError,
+    with pytest.raises(SigmaSMSError,
                        match='Username and password are required'):
         client = AsyncClient('', '')
         await client.auth()
@@ -71,13 +72,28 @@ async def test_send_message_ok(valid_async_client, httpx_mock):
 
 @pytest.mark.asyncio
 async def test_send_message_fail(valid_async_client, httpx_mock):
-    httpx_mock.add_response(status_code=200,
+    httpx_mock.add_response(status_code=400,
                             url='http://online.sigmasms.ru/api/sendings',
                             headers=headers,
                             json=responses['send_msg_fail'])
-    r = await valid_async_client.send_message(
-        'sender', '+79999999999', 'test', 'sms')
-    assert 'text' == r['error']
+    with pytest.raises(httpx.HTTPStatusError) as exc:
+        await valid_async_client.send_message(
+            'sender', '+79999999999', 'test', 'sms')
+
+    resp = exc.value.response.json()
+    assert resp['error'] == 'text'
+
+
+@pytest.mark.asyncio
+async def test_send_message_exception(valid_async_client, httpx_mock):
+    httpx_mock.add_exception(httpx.ReadTimeout('Unable to read within timeout'))
+
+    with pytest.raises(SigmaClientError) as exc:
+        await valid_async_client.send_message(
+            'sender', '+79999999999', 'test', 'sms')
+
+    assert exc.value.reason == 'Unable to read within timeout'
+    assert exc.value.status == 'failed'
 
 
 @pytest.mark.asyncio
@@ -142,12 +158,25 @@ def test_sync_send_message_ok(valid_sync_client, httpx_mock):
 
 
 def test_sync_send_message_fail(valid_sync_client, httpx_mock):
-    httpx_mock.add_response(status_code=200,
+    httpx_mock.add_response(status_code=400,
                             url='http://online.sigmasms.ru/api/sendings',
                             headers=headers,
                             json=responses['send_msg_fail'])
-    r = valid_sync_client.send_message('sender', '+79999999999', 'test', 'sms')
-    assert 'text' == r['error']
+    with pytest.raises(httpx.HTTPStatusError) as exc:
+        valid_sync_client.send_message('sender', '+79999999999', 'test', 'sms')
+
+    resp = exc.value.response.json()
+    assert resp['error'] == 'text'
+
+
+def test_sync_send_message_exception(valid_sync_client, httpx_mock):
+    httpx_mock.add_exception(httpx.ReadTimeout('Unable to read within timeout'))
+
+    with pytest.raises(SigmaClientError) as exc:
+        valid_sync_client.send_message('sender', '+79999999999', 'test', 'sms')
+
+    assert exc.value.reason == 'Unable to read within timeout'
+    assert exc.value.status == 'failed'
 
 
 def test_sync_check_status_ok(valid_sync_client, httpx_mock):

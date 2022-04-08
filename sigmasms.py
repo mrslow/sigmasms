@@ -7,8 +7,15 @@ __all__ = ['Client', 'AsyncClient', 'SigmaClientError']
 _BASE_URL = 'http://online.sigmasms.ru/api'
 
 
-class SigmaClientError(Exception):
+class SigmaSMSError(Exception):
     pass
+
+
+class SigmaClientError(SigmaSMSError):
+
+    def __init__(self, reason):
+        self.status = 'failed'
+        self.reason = str(reason)
 
 
 class BaseClient:
@@ -42,7 +49,11 @@ class Client(BaseClient):
     def _request(self, method, path, **kwargs):
         if self.token is not None:
             kwargs['headers'] = {'Authorization': self.token}
-        resp = self.client.request(method, path, **kwargs)
+        try:
+            resp = self.client.request(method, path, **kwargs)
+        except httpx.TransportError as exc:
+            raise SigmaClientError(exc)
+        resp.raise_for_status()
         return resp.json()
 
     def auth(self):
@@ -78,7 +89,11 @@ class AsyncClient(BaseClient):
     async def _request(self, method, path, **kwargs):
         if self.token is not None:
             kwargs['headers'] = {'Authorization': self.token}
-        resp = await self.client.request(method, path, **kwargs)
+        try:
+            resp = await self.client.request(method, path, **kwargs)
+        except httpx.TransportError as exc:
+            raise SigmaClientError(exc)
+        resp.raise_for_status()
         return resp.json()
 
     async def auth(self):
