@@ -1,5 +1,8 @@
 ## Changelog
 
+#### 2025-02-27
+- Добавлена возможность передать в клиент параметр `base_url`. По умолчанию имеет значение `http://online.sigmasms.ru/api`, для тестирования с Mock-сервером можно передать своё значение.
+
 #### 2022-04-08
 - Добавил обработку httpx.TransportError при выполнении запроса к https://online.sigmasms.ru.
 - Добавил возбуждение исключения httpx.HTTPStatusError при коде ответа https://online.sigmasms.ru >= 400.

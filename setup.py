@@ -7,7 +7,7 @@ dependencies = ['httpx']
 
 setup(
     name='sigmasms',
-    version='1.2.0',
+    version='1.2.1',
     description='Tool for easy working with SigmaSMS API',
     long_description=readme,
     long_description_content_type="text/markdown",
@@ -18,5 +18,5 @@ setup(
     url='https://github.com/mrslow/sigmasms',
     keywords='api sigmasms client',
     packages=find_packages(),
-    python_requires='>=3.7'
+    python_requires='>=3.10'
 )

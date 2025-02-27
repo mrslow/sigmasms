@@ -8,7 +8,7 @@ Module provides an interface for https://sigmasms.ru/api/http/.
 from sigmasms import AsyncClient
 
 # instantiate client
-client = AsyncClient(username='login', password='password', sender='MessageSender')
+client = AsyncClient(username='login', password='password')
 
 # authorize
 await client.auth()

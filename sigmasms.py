@@ -39,9 +39,11 @@ class BaseClient:
 
 class Client(BaseClient):
 
-    def __init__(self, username: str, password: str):
+    def __init__(
+        self, username: str, password: str, base_url: str = _BASE_URL
+    ):
         super().__init__(username, password)
-        self.client: httpx.Client = httpx.Client(base_url=_BASE_URL, timeout=60)
+        self.client: httpx.Client = httpx.Client(base_url=base_url, timeout=60)
 
     def close(self):
         self.client.close()
@@ -78,10 +80,13 @@ class Client(BaseClient):
 
 class AsyncClient(BaseClient):
 
-    def __init__(self, username: str, password: str):
+    def __init__(
+        self, username: str, password: str, base_url: str = _BASE_URL
+    ):
         super().__init__(username, password)
-        self.client: httpx.AsyncClient = httpx.AsyncClient(base_url=_BASE_URL,
-                                                           timeout=60)
+        self.client: httpx.AsyncClient = httpx.AsyncClient(
+            base_url=base_url, timeout=60
+        )
 
     async def close(self):
         await self.client.aclose()
